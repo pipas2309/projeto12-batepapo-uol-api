@@ -22,11 +22,11 @@ cliente.connect().then(() => {  /** Coleções com nome em português **/
 
 
 // SCHEMAS
-const participanteSchema = joi.object({
+const participantsSchema = joi.object({
     name: joi.string().min(1).required()
 });
 
-const mensagemSchema = joi.object({
+const messagesSchema = joi.object({
     from: joi.string().min(1).required(),
     to: joi.string().min(1).required(),
     text: joi.string().min(1).required(),
@@ -74,9 +74,10 @@ app.get('/messages', async (req, res) => { // Falta a logica do LIMIT e restriç
 app.post('/participants', async (req, res) => { // Done
 
     const participant = req.body;
-    const validation = participanteSchema.validate(participant, { abortEarly: false });
 
     //Validation body request
+    const validation = participantsSchema.validate(participant, { abortEarly: false });
+    
     if (validation.error) {
         console.log(validation.error);
         res.sendStatus(422);
@@ -114,18 +115,33 @@ app.post('/participants', async (req, res) => { // Done
     }
 });
 
-app.post('/messages', async (req, res) => {
-    const product = req.body;
+app.post('/messages', async (req, res) => { // Done
 
-    const validation = productSchema.validate(product, { abortEarly: true });
+    const { user } = req.headers;
+    const message = {
+        from: user,
+        ...req.body
+    }
 
-    if (validation.error) {
+    // Validation body/header request
+    const validation = messagesSchema.validate(message, { abortEarly: false });
+    const isTheUserLogged = await db.collection('participantes').findOne({name: message.from})
+
+    if (validation.error || !isTheUserLogged) {
+        console.log("\nErro de validação por Scheme abaixo:");
+        console.log(validation.error.details);
+        console.log("\nO usuário, registrado no sistema, que está tentando enviar a mensagem é: " + isTheUserLogged.name);
         res.sendStatus(422);
         return;
     }
 
     try {
-        await db.collection('mensagens').insertOne(product);
+        const newMessage = {
+            ...message,
+            time: dayjs().format("HH:mm:ss")
+        };
+
+        await db.collection('mensagens').insertOne(newMessage);
         res.sendStatus(201);
     } catch (error) {
         console.error(error);
