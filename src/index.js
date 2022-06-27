@@ -15,27 +15,28 @@ app.use(cors());
 app.use(express.json());
 const cliente = new MongoClient(process.env.URL_CONNECT_MONGO);
 let db;
-cliente.connect().then(() => {
-  db = cliente.db('bate-papo');
+cliente.connect().then(() => {  /** Coleções com nome em português **/
+  db = cliente.db('bate-papo');  
 });
 
 
 
 // SCHEMAS
 const participanteSchema = joi.object({
-    name: joi.string().required()
+    name: joi.string().min(1).required()
 });
 
 const mensagemSchema = joi.object({
-    to: joi.string().required(),
-    text: joi.string().required(),
-    type: joi.string().required()
+    from: joi.string().min(1).required(),
+    to: joi.string().min(1).required(),
+    text: joi.string().min(1).required(),
+    type: joi.string().valid("message", "private_message").required()
 });
 
 
 
 //ROUTES GET
-app.get('/participants', async (req, res) => { //DONE
+app.get('/participants', async (req, res) => { // Done
       
     try {
       const allParticipants = await db.collection('participantes').find().toArray();
@@ -50,7 +51,7 @@ app.get('/participants', async (req, res) => { //DONE
     }
 });
 
-app.get('/messages', async (req, res) => {
+app.get('/messages', async (req, res) => { // Falta a logica do LIMIT e restrição por usuário
     const { limit } = req.query;
     const { user } = req.headers;
 
@@ -70,18 +71,42 @@ app.get('/messages', async (req, res) => {
 
 
 //ROUTES POST
-app.post('/participants', async (req, res) => {
-    const product = req.body;
+app.post('/participants', async (req, res) => { // Done
 
-    const validation = productSchema.validate(product, { abortEarly: true });
+    const participant = req.body;
+    const validation = participanteSchema.validate(participant, { abortEarly: false });
 
+    //Validation body request
     if (validation.error) {
+        console.log(validation.error);
         res.sendStatus(422);
         return;
     }
 
+    //Validation user 
+    const alreadyLogged = await db.collection('participantes').findOne({name: participant.name});
+
+    if(alreadyLogged){
+        res.sendStatus(409);
+        return;
+    }
+
     try {
-        await db.collection('products').insertOne(product);
+        const newParticipant = {
+            ...participant,
+            lastStatus: Date.now()
+        };
+
+        const alertMessageNewParticipant = {
+            from: participant.name,
+            to: "Todos",
+            text: "entra na sala...",
+            type: "status",
+            time: dayjs().format("HH:mm:ss")
+        };
+
+        await db.collection('participantes').insertOne(newParticipant);
+        await db.collection('mensagens').insertOne(alertMessageNewParticipant);
         res.sendStatus(201);
     } catch (error) {
         console.error(error);
