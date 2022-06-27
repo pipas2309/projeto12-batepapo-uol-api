@@ -18,7 +18,6 @@ let db;
 cliente.connect().then(() => {  /** Coleções com nome em português **/
   db = cliente.db('bate-papo');  
 });
-let startingServer = true;
 
 
 
@@ -55,6 +54,7 @@ app.get('/participants', async (req, res) => { // Done
 app.get('/messages', async (req, res) => { // Done
     const { user } = req.headers;
     
+    //Opitional QueryString
     const { limit } = req.query;
     let numMessages = 0;
     
@@ -204,35 +204,32 @@ setInterval(async () => {
             return;
         };
 
-        //
         for(let i = 0; i < participantsOnline.length; i++) {
 
             const user = participantsOnline[i].name;          
 
             if(Date.now() - Number(participantsOnline[i].lastStatus) > process.env.LOGOUT_TIME) {
+
+                const logout = {
+                    from: user,
+                    to: "Todos",
+                    text: "sai da sala...",
+                    type: "status",
+                    time: dayjs().format("HH:mm:ss")
+                };
+
                 await db.collection('participantes').deleteOne({ name: user});
-            } /* else {
-                await db.collection('participantes').updateOne(
-                    {
-                        name: user
-                    },
-                    {
-                        $set: { lastStatus: Date.now() }
-                    }
-                );
-            };   */       
+                await db.collection('mensagens').insertOne(logout);
+            }    
         };
     } catch (error) {
         console.error(error);
     }
-
 }, process.env.ACTIVITY_CHECKER_TIME);
 
-// entrada   --- {from: 'xxx', to: 'Todos', text: 'entra na sala...', type: 'status', time: 'HH:MM:SS'}
-// saida     --- {from: 'xxx', to: 'Todos', text: 'sai da sala...', type: 'status', time: 'HH:MM:SS'}
 
 
-//ROUTES PUT bonus
+//ROUTES PUT (BONUS)
 /* app.put('/messages/:id', async (req, res) => {
     const validation = productSchema.validate(req.body, { abortEarly: true });
 
@@ -258,7 +255,9 @@ setInterval(async () => {
     }
 }); */
 
-//ROUTES DELETE bonus
+
+
+//ROUTES DELETE (BONUS)
 /* app.put('/messages/:id', async (req, res) => {
     const validation = productSchema.validate(req.body, { abortEarly: true });
 
