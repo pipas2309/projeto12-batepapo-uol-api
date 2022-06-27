@@ -52,16 +52,31 @@ app.get('/participants', async (req, res) => { // Done
 });
 
 app.get('/messages', async (req, res) => { // Falta a logica do LIMIT e restrição por usuário
-    const { limit } = req.query;
     const { user } = req.headers;
+    
+    const { limit } = req.query;
+    let numMessages = 0;
+    
+    if(limit) {
+        numMessages = Number(limit);
+    } 
 
     try {
-        const messagesForSpecificUser = await db.collection('mensagens').find().toArray();
-        if (!messagesForSpecificUser) {
-        return res.sendStatus(404);
+        const allMessages = await db.collection('mensagens').find().toArray();
+        if (!allMessages) {
+            return res.sendStatus(404);
         }
 
-        res.send(messagesForSpecificUser);
+        // Exclusive selection logic
+        const specificUserMessages = allMessages.filter(message => { 
+            const privateMessagesIDidntSend = (message.type === "private_message" && message.from !== user);
+            const privateMessagesIDidntReceive = (message.type === "private_message" && message.to !== user);
+
+            return (!privateMessagesIDidntReceive || !privateMessagesIDidntSend);
+        });
+
+        const messagesList = specificUserMessages.slice(-numMessages);
+        res.send(messagesList);
     } catch (error) {
         console.error(error);
         res.sendStatus(500);
