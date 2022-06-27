@@ -230,35 +230,61 @@ setInterval(async () => {
 
 
 //ROUTES PUT (BONUS)
-/* app.put('/messages/:id', async (req, res) => {
-    const validation = productSchema.validate(req.body, { abortEarly: true });
+app.put('/messages/:id', async (req, res) => {
 
-    if (validation.error) {
+    const { user } = req.headers;
+    const message = {
+        from: user,
+        ...req.body
+    }
+
+    // Validation body/header request
+    const validation = messagesSchema.validate(message, { abortEarly: false });
+    const isTheUserLogged = await db.collection('participantes').findOne({name: message.from})
+
+    if (validation.error || !isTheUserLogged) {
+        console.log("\nErro de validação por Scheme abaixo:");
+        console.log(validation.error.details);
+        console.log("\nO usuário, registrado no sistema, que está tentando enviar a mensagem é: " + isTheUserLogged.name);
         res.sendStatus(422);
         return;
     }
 
     try {
-        const id = req.params.id;
+        const idMessage = req.params.id;
 
-        const product = await db.collection('mensagens').findOne({ _id: new ObjectId(id) });
-        if (!product) {
-        return res.sendStatus(404);
+        const messageToEdit = await db.collection('mensagens').findOne({ _id: new ObjectId(idMessage) });
+        
+        if (!messageToEdit) {
+            return res.sendStatus(404);
         }
 
-        await db.collection('mensagens').updateOne({ _id: product._id }, { $set: req.body });
+        if (messageToEdit.from !== user) {
+            return res.sendStatus(401);
+        }
 
-        res.send(product);
+        await db.collection('mensagens').updateOne(
+            { 
+                _id: new ObjectId(idMessage) 
+            }, 
+            { 
+                $set: {
+                    text: message.text,
+                    time: dayjs().format("HH:mm:ss")
+                } 
+            });
+
+        res.send(messageToEdit);
     } catch (error) {
         console.error(error);
         res.sendStatus(500);
     }
-}); */
+});
 
 
 
 //ROUTES DELETE (BONUS)
-app.delete('/messages/:id', async (req, res) => {
+app.delete('/messages/:id', async (req, res) => { // Done
 
     const { user } = req.headers;
     const idMessage = req.params.id;
