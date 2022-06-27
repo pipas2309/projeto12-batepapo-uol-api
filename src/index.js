@@ -18,6 +18,7 @@ let db;
 cliente.connect().then(() => {  /** Coleções com nome em português **/
   db = cliente.db('bate-papo');  
 });
+let startingServer = true;
 
 
 
@@ -192,6 +193,40 @@ app.post('/status', async (req, res) => { // Done
 });
 
 
+
+//Checking active users
+setInterval(async () => {
+    try {
+        const participantsOnline = await db.collection('participantes').find().toArray();
+
+        if(!participantsOnline[0]) {
+            console.log("Não há participantes online");
+            return;
+        };
+
+        //
+        for(let i = 0; i < participantsOnline.length; i++) {
+
+            const user = participantsOnline[i].name;          
+
+            if(Date.now() - Number(participantsOnline[i].lastStatus) > process.env.LOGOUT_TIME) {
+                await db.collection('participantes').deleteOne({ name: user});
+            } /* else {
+                await db.collection('participantes').updateOne(
+                    {
+                        name: user
+                    },
+                    {
+                        $set: { lastStatus: Date.now() }
+                    }
+                );
+            };   */       
+        };
+    } catch (error) {
+        console.error(error);
+    }
+
+}, process.env.ACTIVITY_CHECKER_TIME);
 
 // entrada   --- {from: 'xxx', to: 'Todos', text: 'entra na sala...', type: 'status', time: 'HH:MM:SS'}
 // saida     --- {from: 'xxx', to: 'Todos', text: 'sai da sala...', type: 'status', time: 'HH:MM:SS'}
