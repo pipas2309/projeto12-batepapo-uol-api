@@ -258,30 +258,29 @@ setInterval(async () => {
 
 
 //ROUTES DELETE (BONUS)
-/* app.put('/messages/:id', async (req, res) => {
-    const validation = productSchema.validate(req.body, { abortEarly: true });
+app.delete('/messages/:id', async (req, res) => {
 
-    if (validation.error) {
-        res.sendStatus(422);
-        return;
-    }
+    const { user } = req.headers;
+    const idMessage = req.params.id;
 
     try {
-        const id = req.params.id;
-
-        const product = await db.collection('mensagens').findOne({ _id: new ObjectId(id) });
-        if (!product) {
-        return res.sendStatus(404);
+        const message = await db.collection('mensagens').findOne({ _id: new ObjectId(idMessage) });
+        if (!message) {
+            return res.sendStatus(404);
         }
 
-        await db.collection('mensagens').updateOne({ _id: product._id }, { $set: req.body });
+        if (message.from !== user) {
+            return res.sendStatus(401);
+        }
 
-        res.send(product);
+        await db.collection('mensagens').deleteOne({ _id: new ObjectId(idMessage) });
+
+        res.sendStatus(200);
     } catch (error) {
         console.error(error);
         res.sendStatus(500);
     }
-}); */
+});
 
 
 // PORT
