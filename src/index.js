@@ -51,7 +51,7 @@ app.get('/participants', async (req, res) => { // Done
     }
 });
 
-app.get('/messages', async (req, res) => { // Falta a logica do LIMIT e restrição por usuário
+app.get('/messages', async (req, res) => { // Done
     const { user } = req.headers;
     
     const { limit } = req.query;
@@ -164,19 +164,27 @@ app.post('/messages', async (req, res) => { // Done
     }
 });
 
-app.post('/status', async (req, res) => {
-    const product = req.body;
-
-    const validation = productSchema.validate(product, { abortEarly: true });
-
-    if (validation.error) {
-        res.sendStatus(422);
-        return;
-    }
+app.post('/status', async (req, res) => { // Done
+    const { user } = req.headers;
 
     try {
-        await db.collection('products').insertOne(product);
-        res.sendStatus(201);
+        const isLogged = await db.collection('participantes').findOne({name: user});
+
+        if(!isLogged) {
+            res.sendStatus(404);
+            return;
+        };
+
+        await db.collection('participantes').updateOne(
+            {
+                name: user
+            },
+            {
+                $set: { lastStatus: Date.now() }
+            }
+        );
+
+        res.sendStatus(200);
     } catch (error) {
         console.error(error);
         res.sendStatus(500);
