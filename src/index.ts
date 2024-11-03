@@ -1,4 +1,4 @@
-import 'dotenv/condig';
+import 'dotenv/config';
 import express from 'express';
 import cors from 'cors';
 import { connectToDatabase } from './config/database';
