@@ -18,7 +18,7 @@ export async function addParticipant(req: Request, res: Response, next: NextFunc
     const validation = participantSchema.validate(await req.body, { abortEarly: false });
 
     if (validation.error) {
-        return next(new BadRequestError('Dados inválidos'));
+        return next(new BadRequestError('Formato inválido'));
     }
 
     const name: string = req.body.name;
@@ -27,7 +27,7 @@ export async function addParticipant(req: Request, res: Response, next: NextFunc
         const alreadyLogged = await ParticipantModel.findByName(name);
 
         if (alreadyLogged) {
-            return next(new ConflictError('Nome de usuário já está em uso!'));
+            return next(new ConflictError(`Nome de usuário (${name}) já está em uso!`));
         }
 
         const newParticipant: Participant = {

@@ -40,7 +40,7 @@ export async function addMessage(req: Request, res: Response, next: NextFunction
 
     const validation = messageSchema.validate(message, { abortEarly: false });
     if (validation.error) {
-        return next(new BadRequestError('Dados inválidos'));
+        return next(new BadRequestError('Formato inválido'));
     }
 
     try {
@@ -77,7 +77,7 @@ export async function updateMessage(req: Request, res: Response, next: NextFunct
 
     const validation = messageSchema.validate(message, { abortEarly: false });
     if (validation.error) {
-        return next(new BadRequestError('Dados inválidos'));
+        return next(new BadRequestError('Formato inválido'));
     }
 
     try {
