@@ -3,17 +3,18 @@
   "version": "1.0.1",
   "description": "",
   "type": "module",
-  "main": "index.js",
+  "main": "dist/index.js",
   "scripts": {
-    "dev": "nodemon -r dotenv/config ./src/index.js",
-    "start": "node -r dotenv/config ./src/index.js"
+    "dev": "ts-node-dev -r dotenv/config src/index.ts",
+    "build": "tsc",
+    "start": "node -r dotenv/config dist/index.js"
   },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/pipas2309/projeto12-batepapo-uol-api.git"
   },
   "keywords": [],
-  "author": "",
+  "author": "Lucas Palharini",
   "license": "ISC",
   "bugs": {
     "url": "https://github.com/pipas2309/projeto12-batepapo-uol-api/issues"
