@@ -1,6 +1,6 @@
 <h1 align="center">Welcome to Bate-Papo API 👋</h1>
 <p>
-  <img alt="Version" src="https://img.shields.io/badge/version-1.0.0-blue.svg?cacheSeconds=2592000" />
+  <img alt="Version" src="https://img.shields.io/badge/version-1.3.0-blue.svg?cacheSeconds=2592000" />
 </p>
 
 > Este projeto cria uma API para uma sala de bate-papo, no estilo dos anos 2000, como parte de um projeto educativo.
@@ -10,12 +10,21 @@
 - MongoDB
 - Express
 - Joi
+- Swagger
+- TypeScript
+- Arquitetura em camadas
+- ESLint e Prettier
+- CI/CD
+
+[//]: # (- Jest)
 
 ## 📋 Pré-requisitos
 
-- **Node.js** versão x.x.x
-- **MongoDB**
+- **Node.js** versão 16+
+- **MongoDB** instalado e em execução
 - **Dotenv** para variáveis de ambiente
+- **npm** para gerenciamento de pacotes
+
 
 ## 🚀 Instalação
 
@@ -26,14 +35,20 @@
    ```
 
 2. **Instale as dependências**:
-    
+
     ```bash
     npm install
    ```
-   
+
 3. **Configure as variáveis de ambiente**:
-    
-    Crie um arquivo `.env` com os valores necessários para _**URL_CONNECT_MONGO**_, **_PORT_**, **_LOGOUT_TIME_**, e **_ACTIVITY_CHECKER_TIME_**.
+
+    Crie um arquivo `.env` com os valores necessários, siga o exemplo.
+    ```bash
+    URL_CONNECT_MONGO=sua_url_de_conexao_com_mongodb
+    PORT=3000
+    LOGOUT_TIME=15000 # Tempo que um usuário pode ficar sem enviar o status para o servidor e permanecer online em MS.
+    ACTIVITY_CHECKER_TIME=5000 # Tempo entre as verificações de usuários logados em MS.
+    ```
 
 4. **Banco de dados**:
 
@@ -41,10 +56,29 @@
 
 ## 🏃 Como Rodar
 
-   **Para iniciar o servidor em modo de desenvolvimento**:
+**Para iniciar o servidor em modo de desenvolvimento com recarga automática**:
+
+   ```bash
+   npm run dev
+   ```
+
+**Para compilar o projeto TypeScript para JavaScript**:
+
+   ```bash
+   npm run build
+   ```
+
+**Para iniciar o servidor em modo de desenvolvimento**:
 
    ```bash
    npm start
+   ```
+
+## 📖 Documentação SWAGGER da API
+
+**A documentação Swagger da API está disponível após iniciar o servidor, acessando**:
+   ```bash
+   http://localhost:3000/api-docs
    ```
 
 ## 🚪 Endpoints Disponíveis
@@ -57,6 +91,21 @@
 | **POST**   | `/messages`     | Envia uma nova mensagem para a sala.                                  |
 | **PUT**    | `/messages/:id` | Edita uma mensagem específica (se enviada pelo usuário autenticado).  |
 | **DELETE** | `/messages/:id` | Exclui uma mensagem específica (se enviada pelo usuário autenticado). |
+
+## 🧰 Uso do Makefile
+
+**O projeto inclui um Makefile com comandos úteis para gerenciar o MongoDB e atualizar a versão do projeto.**
+
+* Ajuda: `make help` ou apenas `make`
+* Iniciar o MongoDB: `make start`
+* Verificar o status do MongoDB: `make status`
+* Parar o MongoDB: `make stop`
+* Atualiza a versão do projeto: `make bv <tipo>`
+  * Onde `<tipo>` pode ser:
+    * major: Incrementa a versão principal (X.0.0).
+    * minor: Incrementa a versão secundária (x.X.0).
+    * patch: Incrementa a versão de patch (x.x.X).
+  exemplo: `make bv patch`
 
 ## Autor
 
