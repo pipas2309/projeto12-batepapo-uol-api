@@ -80,6 +80,8 @@ bv bump_version: ## Atualiza a versão do projeto automaticamente (major, minor 
 	new_version="$$major.$$minor.$$patch"; \
 	echo "$$new_version" > VERSION; \
 	sed -i "s/\"version\": \".*\"/\"version\": \"$$new_version\"/" package.json; \
+	sed -i "s/\"version\": \".*\"/\"version\": \"$$new_version\"/" package-lock.json; \
+	sed -i "s/version: '.*'/version: '$$new_version'/" src/config/swagger.ts; \
 	echo -e "$(GREEN)Versão atualizada para $$new_version$(RESET)"; \
 	echo -e "\n$(YELLOW)Sugestão de commit:$(RESET)"; \
 	echo -e "$(GREEN)🔖 chore: bump version to $$new_version$(RESET)"; \
