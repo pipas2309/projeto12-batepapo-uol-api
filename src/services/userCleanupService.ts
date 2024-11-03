@@ -2,6 +2,7 @@ import { getCurrentTime } from '../utils/timeUtils';
 import { ParticipantModel } from '../models/participantModel';
 import { Message, MessageModel } from '../models/messageModel';
 
+/** Inicia o serviço de limpeza de participantes inativos */
 export function startUserCleanupService(): void {
     setInterval(async () => {
         try {

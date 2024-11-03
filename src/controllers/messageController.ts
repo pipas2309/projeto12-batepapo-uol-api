@@ -5,6 +5,12 @@ import { Message, MessageBase, MessageModel } from '../models/messageModel';
 import { ParticipantModel } from '../models/participantModel';
 import { getCurrentTime } from '../utils/timeUtils';
 
+/**
+ * Obtém mensagens para um usuário específico com um limite opcional.
+ * @param req A requisição Express.
+ * @param res A resposta com um Array de mensagens.
+ * @param next O próximo middleware.
+ */
 export async function getMessages(req: Request, res: Response, next: NextFunction): Promise<void> {
     const user = req.headers.user as string;
     const limit = parseInt(req.query.limit as string) || 0;
@@ -27,6 +33,12 @@ export async function getMessages(req: Request, res: Response, next: NextFunctio
     }
 }
 
+/**
+ * Adiciona uma nova mensagem.
+ * @param req A requisição Express.
+ * @param res A resposta Express.
+ * @param next O próximo middleware.
+ */
 export async function addMessage(req: Request, res: Response, next: NextFunction): Promise<void> {
     const user = req.headers.user as string;
     const { to, text, type }: { to: string; text: string; type: string } = req.body;
@@ -63,6 +75,12 @@ export async function addMessage(req: Request, res: Response, next: NextFunction
     }
 }
 
+/**
+ * Atualiza uma mensagem específica.
+ * @param req A requisição Express.
+ * @param res A resposta Express.
+ * @param next O próximo middleware.
+ */
 export async function updateMessage(req: Request, res: Response, next: NextFunction): Promise<void> {
     const user = req.headers.user as string;
     const { id } = req.params;
@@ -99,6 +117,12 @@ export async function updateMessage(req: Request, res: Response, next: NextFunct
     }
 }
 
+/**
+ * Exclui uma mensagem específica.
+ * @param req A requisição Express.
+ * @param res A resposta Express.
+ * @param next O próximo middleware.
+ */
 export async function deleteMessage(req: Request, res: Response, next: NextFunction): Promise<void> {
     const user = req.headers.user as string;
     const { id } = req.params;

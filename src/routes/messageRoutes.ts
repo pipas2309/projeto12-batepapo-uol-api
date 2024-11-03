@@ -3,6 +3,7 @@ import { getMessages, addMessage, updateMessage, deleteMessage } from '../contro
 
 const messageRouter = Router();
 
+/** Rotas relacionadas com as mensagens. */
 messageRouter.get('/messages', getMessages);
 messageRouter.post('/messages', addMessage);
 messageRouter.put('/messages/:id', updateMessage);

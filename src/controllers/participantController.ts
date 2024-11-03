@@ -5,6 +5,12 @@ import { getCurrentTime } from '../utils/timeUtils';
 import { Participant, ParticipantModel } from '../models/participantModel';
 import { Message, MessageModel } from '../models/messageModel';
 
+/**
+ * Obtém a lista de participantes.
+ * @param req A requisição Express.
+ * @param res A resposta Express.
+ * @param next O próximo middleware.
+ */
 export async function getParticipants(req: Request, res: Response, next: NextFunction): Promise<void> {
     try {
         const allParticipants = await ParticipantModel.findAll();
@@ -14,6 +20,12 @@ export async function getParticipants(req: Request, res: Response, next: NextFun
     }
 }
 
+/**
+ * Adiciona um novo participante.
+ * @param req A requisição Express.
+ * @param res A resposta Express.
+ * @param next O próximo middleware.
+ */
 export async function addParticipant(req: Request, res: Response, next: NextFunction): Promise<void> {
     const validation = participantSchema.validate(await req.body, { abortEarly: false });
 

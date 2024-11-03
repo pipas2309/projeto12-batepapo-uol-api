@@ -3,6 +3,7 @@ import { getParticipants, addParticipant } from '../controllers/participantContr
 
 const participantRouter = Router();
 
+/** Rotas relacionadas com os participantes. */
 participantRouter.get('/participants', getParticipants);
 participantRouter.post('/participants', addParticipant);
 
