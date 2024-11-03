@@ -1,38 +1,86 @@
-# Cores
+# Configurações, Cores e Variáveis
 YELLOW = \033[1;33m
-GREEN = \033[1;32m
-RED = \033[1;31m
-BLUE = \033[1;34m
-MAGENTA = \033[1;35m
-RESET = \033[0m
+GREEN  = \033[1;32m
+RED    = \033[1;31m
+BLUE   = \033[1;34m
+MAGENTA= \033[1;35m
+RESET  = \033[0m
 
-# Exibe todos os comandos disponíveis e suas descrições
+SHELL := /bin/bash
+
 help h:
-	@echo "\n$(MAGENTA)- - - Comandos disponíveis no Makefile - - -$(RESET)\n"
-	@grep -E '^[a-zA-Z_-]+:.*?## .*$$' $(MAKEFILE_LIST) | awk 'BEGIN {FS = ":.*?## "}; {printf "$(YELLOW)make %s$(RESET) - $(GREEN)%s$(RESET)\n\n", toupper($$1), $$2}'
+	@echo -e "$(MAGENTA)- - - Comandos disponíveis no Makefile - - -$(RESET)"
+	@awk -F ':|##' "\
+		BEGIN { section = \"\" } \
+		/^##@/ { \
+			section = substr(\$$0, index(\$$0, \$$2)); \
+			printf \"\n $(MAGENTA) %s$(RESET)\n\", section; \
+			next \
+		} \
+		/^[a-zA-Z0-9_-]+([ ]+[a-zA-Z0-9_-]+)*:/ { \
+			split(\$$1, targets, \" \"); \
+			gsub(/^[ \\t]+|[ \\t]+\$$/, \"\", \$$3); \
+			for (i in targets) { \
+				if (targets[i] != \"help\" && targets[i] != \"h\") { \
+					printf \"     $(YELLOW)make %s$(RESET) - $(GREEN)%s$(RESET)\n\", toupper(targets[i]), \$$3 \
+				} \
+			} \
+		} \
+	" $(MAKEFILE_LIST)
 
-# Comandos do Makefile
+	@echo
 
+##@ Comandos do MongoDB
 start: ## Inicia o serviço do MongoDB
-	@echo "\n$(YELLOW)Iniciando o MongoDB...$(RESET)"
+	@echo -e "\n$(YELLOW)Iniciando o MongoDB...$(RESET)"
 	sudo systemctl start mongod
-
 status: ## Verifica o status do MongoDB e exibe um resumo
-	@echo "\n$(BLUE)Verificando o status do banco de dados MongoDB...\n$(RESET)"
+	@echo -e "\n$(BLUE)Verificando o status do MongoDB...\n$(RESET)"
 	@status_output=$$(sudo systemctl status mongod); \
 	echo "$$status_output"; \
 	if echo "$$status_output" | grep -q "Active: active (running)"; then \
-		echo "\n$(GREEN)Resumo: MongoDB está em execução$(RESET)\n"; \
+		echo -e "\n$(GREEN)Resumo: MongoDB está em execução$(RESET)\n"; \
 	elif echo "$$status_output" | grep -q "Active: inactive (dead)"; then \
-		echo "\n$(RED)Resumo: MongoDB está parado$(RESET)\n"; \
+		echo -e "\n$(RED)Resumo: MongoDB está parado$(RESET)\n"; \
 	else \
-		echo "\n$(YELLOW)Resumo: Status desconhecido$(RESET)\n"; \
+		echo -e "\n$(YELLOW)Resumo: Status desconhecido$(RESET)\n"; \
 	fi
-
-open: ## Abre o MongoDB no navegador em localhost:27017
-	@echo "\n$(BLUE)Abrindo MongoDB no navegador em localhost:27017...$(RESET)"
-	xdg-open http://localhost:27017
-
 stop: ## Para o serviço do MongoDB
-	@echo "\n$(YELLOW)Encerrando o MongoDB...$(RESET)"
+	@echo -e "\n$(YELLOW)Encerrando o MongoDB...$(RESET)"
 	sudo systemctl stop mongod
+
+##@ Script de Atualização de Versão
+# Captura o tipo de atualização a partir dos argumentos
+TYPE := $(filter major minor patch,$(MAKECMDGOALS))
+# Remove o argumento de TYPE dos objetivos para evitar erros
+MAKECMDGOALS := $(filter-out $(TYPE),$(MAKECMDGOALS))
+
+.PHONY: bv bump_version major minor patch
+
+bv bump_version: ## Atualiza a versão do projeto automaticamente (major, minor ou patch) ou exibe instruções de uso
+	@if [ -z "$(TYPE)" ]; then \
+		echo -e "\n$(MAGENTA)Uso do comando de atualização de versão:$(RESET)"; \
+		echo -e "$(YELLOW)make bv <tipo>$(RESET) - onde <tipo> pode ser 'major', 'minor' ou 'patch'."; \
+		echo -e "Exemplo: $(BLUE)make bv major$(RESET) - para incrementar a versão principal."; \
+		echo ""; \
+		exit 0; \
+	fi; \
+	current_version=$$(cat VERSION); \
+	IFS='.' read -r major minor patch <<< "$$current_version"; \
+	if [ "$(TYPE)" = "major" ]; then \
+		major=$$((major + 1)); minor=0; patch=0; \
+	elif [ "$(TYPE)" = "minor" ]; then \
+		minor=$$((minor + 1)); patch=0; \
+	elif [ "$(TYPE)" = "patch" ]; then \
+		patch=$$((patch + 1)); \
+	else \
+		echo -e "$(RED)Erro: Tipo de atualização inválido. Use 'major', 'minor' ou 'patch'.$(RESET)"; \
+		exit 1; \
+	fi; \
+	new_version="$$major.$$minor.$$patch"; \
+	echo "$$new_version" > VERSION; \
+	sed -i "s/\"version\": \".*\"/\"version\": \"$$new_version\"/" package.json; \
+	echo -e "$(GREEN)Versão atualizada para $$new_version$(RESET)"; \
+	echo -e "\n$(YELLOW)Sugestão de commit:$(RESET)"; \
+	echo -e "$(GREEN)🔖 chore: bump version to $$new_version$(RESET)"; \
+	echo ""
