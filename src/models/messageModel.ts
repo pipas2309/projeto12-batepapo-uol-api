@@ -2,7 +2,29 @@ import { db } from '../config/database';
 import { ObjectId } from 'mongodb';
 import { getCurrentTime } from '../utils/timeUtils';
 
-/** Interface básica de uma mensagem */
+/**
+ * Interface base para uma mensagem.
+ * @swagger
+ * components:
+ *   schemas:
+ *     MessageBase:
+ *       type: object
+ *       required:
+ *         - from
+ *         - to
+ *         - text
+ *         - type
+ *       properties:
+ *         from:
+ *           type: string
+ *         to:
+ *           type: string
+ *         text:
+ *           type: string
+ *         type:
+ *           type: string
+ *           enum: [message, private_message]
+ */
 export interface MessageBase {
     from: string;
     to: string;
@@ -10,7 +32,21 @@ export interface MessageBase {
     type: string;
 }
 
-/** Interface completa de uma mensagem */
+/**
+ * Interface para uma mensagem completa com tempo.
+ * @swagger
+ * components:
+ *   schemas:
+ *     Message:
+ *       allOf:
+ *         - $ref: '#/components/schemas/MessageBase'
+ *         - type: object
+ *           required:
+ *             - time
+ *           properties:
+ *             time:
+ *               type: string
+ */
 export interface Message extends MessageBase {
     time: string;
 }

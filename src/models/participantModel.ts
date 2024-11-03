@@ -1,9 +1,43 @@
 import { db } from '../config/database';
 
-/** Interface que representa um participante */
+/**
+ * Interface representando um participante.
+ * @swagger
+ * components:
+ *   schemas:
+ *     Participant:
+ *       type: object
+ *       required:
+ *         - name
+ *         - lastStatus
+ *       properties:
+ *         name:
+ *           type: string
+ *         lastStatus:
+ *           type: integer
+ *           format: int64
+ *           description: Timestamp do último status do participante.
+ */
 export interface Participant {
     name: string;
-    lastStatus: number;
+    lastStatus?: number;
+}
+
+/**
+ * Interface representando os dados necessários para criar um participante.
+ * @swagger
+ * components:
+ *   schemas:
+ *     ParticipantInput:
+ *       type: object
+ *       required:
+ *         - name
+ *       properties:
+ *         name:
+ *           type: string
+ */
+export interface ParticipantInput {
+    name: string;
 }
 
 /** Classe modelo para lidar com participantes no banco de dados */
