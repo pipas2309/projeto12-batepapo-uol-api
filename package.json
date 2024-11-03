@@ -7,7 +7,9 @@
   "scripts": {
     "dev": "ts-node-dev -r dotenv/config src/index.ts",
     "build": "tsc",
-    "start": "node -r dotenv/config dist/index.js"
+    "start": "node -r dotenv/config dist/index.js",
+    "lint": "eslint 'src/**/*.{ts,tsx}' --fix",
+    "format": "prettier --write 'src/**/*.{ts,tsx,js,json,md}'"
   },
   "repository": {
     "type": "git",
