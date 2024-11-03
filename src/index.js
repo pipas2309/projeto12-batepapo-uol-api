@@ -6,10 +6,8 @@ import dotenv from 'dotenv';
 import joi from 'joi';
 import dayjs from 'dayjs';
 
-
-
 // CONFIGS
-dotenv.config();
+dotenv.config({ path:  '../.env' });
 const app = express();
 app.use(cors());
 app.use(express.json());
@@ -18,8 +16,6 @@ let db;
 cliente.connect().then(() => {  /** Coleções com nome em português **/
   db = cliente.db('bate-papo');  
 });
-
-
 
 // SCHEMAS
 const participantsSchema = joi.object({
@@ -32,8 +28,6 @@ const messagesSchema = joi.object({
     text: joi.string().min(1).required(),
     type: joi.string().valid("message", "private_message").required()
 });
-
-
 
 //ROUTES GET
 app.get('/participants', async (req, res) => { // Done
@@ -84,12 +78,10 @@ app.get('/messages', async (req, res) => { // Done
     }
 });
 
-
-
 //ROUTES POST
 app.post('/participants', async (req, res) => { // Done
 
-    const participant = req.body;
+    const participant = await req.body;
 
     //Validation body request
     const validation = participantsSchema.validate(participant, { abortEarly: false });
