@@ -11,5 +11,5 @@ module.exports = {
         '!src/config/swagger.ts',
         '!src/config/database.ts',
     ],
-    setupFilesAfterEnv: ['<rootDir>/tests/setupTests.ts'],
+    setupFilesAfterEnv: ['<rootDir>/tests/jest.setup.ts'],
 };
