@@ -12,6 +12,8 @@
     "format": "prettier --write 'src/**/*.{ts,tsx,js,json,md}'",
     "prepare": "husky",
     "test": "jest",
+    "test:unit": "jest --testPathPattern=tests/unit",
+    "test:integration": "jest --testPathPattern=tests/integration",
     "test:watch": "jest --watch"
   },
   "repository": {
