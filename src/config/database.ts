@@ -1,9 +1,12 @@
 import { MongoClient, Db } from 'mongodb';
 
-const mongoClient = new MongoClient(process.env.URL_CONNECT_MONGO);
+const url = process.env.NODE_ENV === 'test' ? process.env.URL_CONNECT_MONGO_TEST : process.env.URL_CONNECT_MONGO;
+const mongoClient = new MongoClient(url);
 
 /** Instância do banco de dados MongoDB. */
-export let db: Db;
+export const database = {
+    mongo: null as Db | null,
+};
 
 /**
  * Conecta-se ao banco de dados MongoDB.
@@ -14,7 +17,7 @@ export let db: Db;
 export async function connectToDatabase(): Promise<void> {
     try {
         await mongoClient.connect();
-        db = mongoClient.db('bate-papo');
+        database.mongo = mongoClient.db('bate-papo');
         console.log('Conectado ao MongoDB');
     } catch (error) {
         console.error('Erro ao conectar ao MongoDB:', error);

@@ -1,4 +1,4 @@
-import { db } from '../config/database';
+import { database } from '../config/database';
 
 /**
  * Interface representando um participante.
@@ -20,7 +20,7 @@ import { db } from '../config/database';
  */
 export interface Participant {
     name: string;
-    lastStatus?: number;
+    lastStatus: number;
 }
 
 /**
@@ -48,7 +48,7 @@ export class ParticipantModel {
      * @returns A promessa de retorno da mensagem ou nulo.
      */
     static async findByName(name: string): Promise<Participant | null> {
-        return db.collection<Participant>('participantes').findOne({ name });
+        return database.mongo!.collection<Participant>('participantes').findOne({ name });
     }
 
     /**
@@ -56,7 +56,7 @@ export class ParticipantModel {
      * @param participant {Participant} - Participante a ser salvo.
      */
     static async create(participant: Participant): Promise<void> {
-        await db.collection('participantes').insertOne(participant);
+        await database.mongo!.collection('participantes').insertOne(participant);
     }
 
     /**
@@ -65,7 +65,7 @@ export class ParticipantModel {
      * @param lastStatus - Novo timestamp.
      */
     static async updateLastStatus(name: string, lastStatus: number): Promise<void> {
-        await db.collection('participantes').updateOne({ name }, { $set: { lastStatus } });
+        await database.mongo!.collection('participantes').updateOne({ name }, { $set: { lastStatus } });
     }
 
     /**
@@ -73,7 +73,7 @@ export class ParticipantModel {
      * @param name - Nome do participante.
      */
     static async deleteByName(name: string): Promise<void> {
-        await db.collection('participantes').deleteOne({ name });
+        await database.mongo!.collection('participantes').deleteOne({ name });
     }
 
     /**
@@ -81,6 +81,6 @@ export class ParticipantModel {
      * @returns A promessa de retorno do array de participante.
      */
     static async findAll(): Promise<Participant[]> {
-        return db.collection<Participant>('participantes').find().toArray();
+        return database.mongo!.collection<Participant>('participantes').find().toArray();
     }
 }
