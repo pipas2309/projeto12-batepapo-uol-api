@@ -1,0 +1,43 @@
+name: Validate Branch Names and Merge Restrictions
+
+on:
+    pull_request:
+        types: [opened, synchronize, reopened]
+
+jobs:
+    validate-branch:
+        runs-on: ubuntu-latest
+
+        steps:
+            - name: Verificar nome da branch de origem
+              uses: actions/github-script@v6
+              with:
+                  script: |
+                      const sourceBranch = context.payload.pull_request.head.ref;
+                      const targetBranch = context.payload.pull_request.base.ref;
+
+                      const validSourcePrefixes = ['feature/', 'bugfix/', 'release/', 'hotfix/', 'develop'];
+                      const validTargetBranches = {
+                        'feature/': ['develop'],
+                        'bugfix/': ['develop'],
+                        'release/': ['develop', 'main'],
+                        'hotfix/': ['develop', 'main'],
+                        'develop': ['release/'],
+                      };
+
+                      let isValidSource = false;
+                      let allowedTargets = [];
+
+                      for (const prefix of validSourcePrefixes) {
+                        if (sourceBranch.startsWith(prefix)) {
+                          isValidSource = true;
+                          allowedTargets = validTargetBranches[prefix];
+                          break;
+                        }
+                      }
+
+                      if (!isValidSource) {
+                        core.setFailed(`Nome da branch de origem inválido: ${sourceBranch}. Deve começar com um dos prefixos: ${validSourcePrefixes.join(', ')}`);
+                      } else if (!allowedTargets.includes(targetBranch)) {
+                        core.setFailed(`Merge inválido: Branch de origem ${sourceBranch} não pode ser mesclada na branch de destino ${targetBranch}.`);
+                      }
