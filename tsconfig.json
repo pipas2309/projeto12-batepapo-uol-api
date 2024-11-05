@@ -7,8 +7,8 @@
     "lib": ["ES2020"],
 
     /* Diretórios */
-    "rootDir": "src",
-    "outDir": "dist",
+    "rootDir": "./",
+    "outDir": "./dist/",
 
     /* Strict Type-Checking Options */
     "strict": true,
@@ -30,6 +30,8 @@
     /* Tipos para Node e Jest */
     "types": ["node", "jest"]
   },
-  "include": ["src/**/*", "src/types/**/*", "tests/**/*"],
+  "include": ["src/**/*", "src/types/**/*", "tests/**/*",
+      "tests/factories/**/*"
+  ],
   "exclude": ["node_modules", "dist"]
 }
