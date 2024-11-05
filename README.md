@@ -1,4 +1,4 @@
-<h1 align="center">Welcome to Bate-Papo API 👋</h1>
+<h1 style="text-align: center">Welcome to Bate-Papo API 👋</h1>
 <p>
   <img alt="Version" src="https://img.shields.io/badge/version-1.3.0-blue.svg?cacheSeconds=2592000" />
 </p>
@@ -15,8 +15,8 @@
 - Arquitetura em camadas
 - ESLint e Prettier
 - CI/CD
-
-[//]: # (- Jest)
+- Jest e supertest
+- Makefile
 
 ## 📋 Pré-requisitos
 
@@ -45,9 +45,11 @@
     Crie um arquivo `.env` com os valores necessários, siga o exemplo.
     ```bash
     URL_CONNECT_MONGO=sua_url_de_conexao_com_mongodb
+    URL_CONNECT_MONGO_TEST=sua_url_de_conexao_com_mongodb-teste
     PORT=3000
     LOGOUT_TIME=15000 # Tempo que um usuário pode ficar sem enviar o status para o servidor e permanecer online em MS.
     ACTIVITY_CHECKER_TIME=5000 # Tempo entre as verificações de usuários logados em MS.
+    NODE_ENV=dev
     ```
 
 4. **Banco de dados**:
@@ -74,6 +76,12 @@
    npm start
    ```
 
+**Para rodar todos os testes**:
+
+   ```bash
+   npm test
+   ```
+
 ## 📖 Documentação SWAGGER da API
 
 **A documentação Swagger da API está disponível após iniciar o servidor, acessando**:
@@ -91,6 +99,11 @@
 | **POST**   | `/messages`     | Envia uma nova mensagem para a sala.                                  |
 | **PUT**    | `/messages/:id` | Edita uma mensagem específica (se enviada pelo usuário autenticado).  |
 | **DELETE** | `/messages/:id` | Exclui uma mensagem específica (se enviada pelo usuário autenticado). |
+
+## 🧪 Testes e Cobertura
+
+* O projeto utiliza Jest e supertest para testes de unidade e integração, garantindo uma cobertura de 100%.
+* Relatórios de cobertura de código podem ser encontrados em ./coverage/lcov-report/index.html para visualização detalhada. Basta rodar os testes para ter acesso.
 
 ## 🧰 Uso do Makefile
 
