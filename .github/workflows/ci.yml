@@ -10,6 +10,7 @@ on:
 jobs:
     build-and-test:
         runs-on: ubuntu-latest
+        environment: URL_CONNECT_MONGO
 
         steps:
             - name: Checkout código
@@ -23,18 +24,19 @@ jobs:
             - name: Instalar dependências
               run: npm install
 
-            - name: Configurar variáveis de ambiente para testes
-              run: cp .env.test .env
-
-            - name: Executar testes com cobertura
-              run: npm test
+            - name: Executar testes com cobertura e verificar limites
+              env:
+                  URL_CONNECT_MONGO: ${{ vars.URL_CONNECT_MONGO }}
+                  URL_CONNECT_MONGO_TEST: ${{ vars.URL_CONNECT_MONGO_TEST }}
+                  LOGOUT_TIME: ${{ vars.LOGOUT_TIME }}
+                  ACTIVITY_CHECKER_TIME: ${{ vars.ACTIVITY_CHECKER_TIME }}
+                  NODE_ENV: ${{ vars.NODE_ENV }}
+                  PORT: ${{ vars.PORT }}
+              run: |
+                  npx jest --coverage --coverageThreshold='{ "global": { "branches": 80, "functions": 80, "lines": 80, "statements": 80 } }'
 
             - name: Publicar relatório de cobertura
               uses: actions/upload-artifact@v3
               with:
                   name: coverage-report
                   path: coverage/
-
-            - name: Verificar cobertura mínima
-              run: |
-                  npx jest --coverage --coverageThreshold='{ "global": { "branches": 80, "functions": 80, "lines": 80, "statements": 80 } }'
