@@ -1,4 +1,4 @@
-const { execSync } = require('child_process');
+import { execSync } from 'node:child_process';
 
 const validPrefixes = ['feature/', 'bugfix/', 'release/', 'hotfix/'];
 
