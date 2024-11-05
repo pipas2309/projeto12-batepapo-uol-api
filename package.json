@@ -14,7 +14,8 @@
     "test": "jest",
     "test:unit": "jest --testPathPattern=tests/unit",
     "test:integration": "jest --testPathPattern=tests/integration",
-    "test:watch": "jest --watch"
+    "test:watch": "jest --watch",
+    "lint-branch-name": "node infrastructure/scripts/verify-branch-name.js"
   },
   "repository": {
     "type": "git",
