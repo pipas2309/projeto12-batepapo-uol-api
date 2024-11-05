@@ -1,6 +1,9 @@
 <h1 style="text-align: center">Welcome to Bate-Papo API 👋</h1>
 <p>
-  <img alt="Version" src="https://img.shields.io/badge/version-2.0.0-blue.svg?cacheSeconds=2592000" />
+    <img alt="Version" src="https://img.shields.io/badge/version-2.2.0-blue.svg?cacheSeconds=2592000" />
+    <a href="https://codecov.io/github/pipas2309/projeto12-batepapo-uol-api" >
+        <img src="https://codecov.io/github/pipas2309/projeto12-batepapo-uol-api/graph/badge.svg?token=SI8A2BTEMY" alt="codecov badge"/>
+    </a>
 </p>
 
 > Este projeto cria uma API para uma sala de bate-papo, no estilo dos anos 2000, como parte de um projeto educativo.
