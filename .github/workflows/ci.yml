@@ -10,7 +10,7 @@ on:
 jobs:
     build-and-test:
         runs-on: ubuntu-latest
-        environment: URL_CONNECT_MONGO
+        environment: Principal
 
         steps:
             - name: Checkout código
@@ -40,3 +40,8 @@ jobs:
               with:
                   name: coverage-report
                   path: coverage/
+
+            - name: Upload results to Codecov
+              uses: codecov/codecov-action@v4
+              with:
+                  token: ${{ secrets.CODECOV_TOKEN }}
