@@ -15,7 +15,7 @@ export async function updateStatus(req: Request, res: Response, next: NextFuncti
         const isLogged = await ParticipantModel.findByName(user);
 
         if (!isLogged) {
-            return next(new NotFoundError());
+            return next(new NotFoundError('Participante não encontrado'));
         }
 
         await ParticipantModel.updateLastStatus(user, Date.now());
