@@ -27,7 +27,6 @@ describe('Status Controller - updateStatus', () => {
     });
 
     it('deve atualizar o status de um participante', async () => {
-        // Mock para encontrar o usuário e atualizar o status com sucesso
         (ParticipantModel.findByName as jest.Mock).mockResolvedValue({ name: 'TestUser' });
         (ParticipantModel.updateLastStatus as jest.Mock).mockResolvedValue(undefined);
 
@@ -39,24 +38,22 @@ describe('Status Controller - updateStatus', () => {
     });
 
     it('deve retornar erro de não autorizado se o participante não for encontrado', async () => {
-        // Mock para simular que o participante não está logado
         (ParticipantModel.findByName as jest.Mock).mockResolvedValue(null);
 
         await updateStatus(req as Request, res as Response, next);
 
         expect(ParticipantModel.findByName).toHaveBeenCalledWith('TestUser');
         expect(next).toHaveBeenCalledWith(expect.any(NotFoundError));
-        expect(res.sendStatus).not.toHaveBeenCalled(); // Não deve retornar status 200
+        expect(res.sendStatus).not.toHaveBeenCalled();
     });
 
     it('deve retornar erro se o banco de dados estiver desligado', async () => {
-        // Mock para simular uma falha de conexão com o banco de dados
         (ParticipantModel.findByName as jest.Mock).mockRejectedValue(new Error('Database is down'));
 
         await updateStatus(req as Request, res as Response, next);
 
         expect(ParticipantModel.findByName).toHaveBeenCalledWith('TestUser');
         expect(next).toHaveBeenCalledWith(new Error('Database is down'));
-        expect(res.sendStatus).not.toHaveBeenCalled(); // Não deve retornar status 200
+        expect(res.sendStatus).not.toHaveBeenCalled();
     });
 });

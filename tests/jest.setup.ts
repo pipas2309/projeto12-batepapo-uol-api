@@ -20,7 +20,6 @@ afterAll(async () => {
 });
 
 afterEach(async () => {
-    // Limpa o banco de dados após cada teste
     const participantes = mongoose.connection.collection('participantes');
     const mensagens = mongoose.connection.collection('mensagens');
     if (participantes) {

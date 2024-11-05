@@ -1,7 +1,6 @@
 import { cleanupInactiveUsers, startUserCleanupService } from '../../../src/services/userCleanupService';
 import { ParticipantModel } from '../../../src/models/participantModel';
 import { MessageModel } from '../../../src/models/messageModel';
-import { getCurrentTime } from '../../../src/utils/timeUtils';
 
 jest.mock('../../../src/models/participantModel');
 jest.mock('../../../src/models/messageModel');
@@ -12,7 +11,7 @@ jest.mock('../../../src/utils/timeUtils', () => ({
 describe('User Cleanup Service', () => {
     beforeEach(() => {
         jest.clearAllMocks();
-        jest.spyOn(global.Date, 'now').mockImplementation(() => 1000000000000); // Fixa Date.now() para testes
+        jest.spyOn(global.Date, 'now').mockImplementation(() => 1000000000000);
     });
 
     afterAll(() => {
@@ -51,11 +50,11 @@ describe('User Cleanup Service', () => {
 
     describe('startUserCleanupService', () => {
         it('deve agendar o cleanupInactiveUsers com setInterval', () => {
-            const setIntervalSpy = jest.spyOn(global, 'setInterval'); // Monitoramos setInterval
+            const setIntervalSpy = jest.spyOn(global, 'setInterval');
             startUserCleanupService();
 
             expect(setIntervalSpy).toHaveBeenCalledWith(cleanupInactiveUsers, Number(process.env.ACTIVITY_CHECKER_TIME));
-            setIntervalSpy.mockRestore(); // Limpa o mock de setInterval após o teste
+            setIntervalSpy.mockRestore();
         });
     });
 });

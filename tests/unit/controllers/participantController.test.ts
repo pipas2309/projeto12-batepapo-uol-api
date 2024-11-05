@@ -43,7 +43,7 @@ describe('Participant Controller - addParticipant', () => {
         await getParticipants({} as Request, res as Response, next);
 
         expect(ParticipantModel.findAll).toHaveBeenCalled();
-        expect(res.send).toHaveBeenCalledWith([{ name: 'TestUser' }, { name: 'User2' }]); // Verifica se res.send foi chamado com a lista de participantes
+        expect(res.send).toHaveBeenCalledWith([{ name: 'TestUser' }, { name: 'User2' }]);
     });
 
     it('deve retornar erro se o participante já existe', async () => {

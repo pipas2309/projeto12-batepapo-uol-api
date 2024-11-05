@@ -1,7 +1,6 @@
 import request from 'supertest';
 import app from '../../../src/app';
 import { createParticipant } from '../../factories/participantFactory';
-import { ParticipantModel } from '../../../src/models/participantModel';
 
 describe('Rota de Status', () => {
     beforeEach(async () => {
@@ -19,7 +18,7 @@ describe('Rota de Status', () => {
     it('deve retornar erro de não encontrado se o participante não existir', async () => {
         const response = await request(app)
             .post('/status')
-            .set('user', 'NonExistentUser'); // Tentando atualizar status de usuário não encontrado
+            .set('user', 'NonExistentUser');
 
         expect(response.status).toBe(404);
         expect(response.body.message).toContain('Participante não encontrado');

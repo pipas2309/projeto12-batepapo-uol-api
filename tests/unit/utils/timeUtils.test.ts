@@ -1,5 +1,4 @@
 import { getCurrentTime } from '../../../src/utils/timeUtils';
-import dayjs from 'dayjs';
 
 describe('getCurrentTime', () => {
     it('deve retornar o horário atual no formato HH:mm:ss', () => {

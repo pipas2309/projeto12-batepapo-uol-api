@@ -5,7 +5,7 @@ import { createMessage } from '../../factories/messageFactory';
 
 describe('Rota de Mensagens', () => {
     beforeEach(async () => {
-        await createParticipant({ name: 'John Doe' }); // Usuário logado para testes
+        await createParticipant({ name: 'John Doe' });
     });
 
     it('deve adicionar uma nova mensagem', async () => {
@@ -21,7 +21,7 @@ describe('Rota de Mensagens', () => {
         const response = await request(app)
             .post('/messages')
             .set('user', 'John Doe')
-            .send({ para: 'Jane Doe', texto: 'Hello, Jane!' }); // Campos incorretos
+            .send({ para: 'Jane Doe', texto: 'Hello, Jane!' });
 
         expect(response.status).toBe(400);
         expect(response.body.message).toContain('Formato inválido');
@@ -30,7 +30,7 @@ describe('Rota de Mensagens', () => {
     it('deve retornar erro se o usuário não estiver logado', async () => {
         const response = await request(app)
             .post('/messages')
-            .set('user', 'NonExistentUser') // Usuário que não existe
+            .set('user', 'NonExistentUser')
             .send({ to: 'Jane Doe', text: 'Hello, Jane!', type: 'message' });
 
         expect(response.status).toBe(403);
@@ -77,7 +77,7 @@ describe('Rota de Mensagens', () => {
 
         const response = await request(app)
             .put(`/messages/${message._id}`)
-            .set('user', 'John Doe') // Tentando atualizar mensagem de outro usuário
+            .set('user', 'John Doe')
             .send({ text: 'Updated Text', to: 'Jane Doe', type: 'message' });
 
         expect(response.status).toBe(401);
@@ -108,7 +108,7 @@ describe('Rota de Mensagens', () => {
 
         const response = await request(app)
             .delete(`/messages/${message._id}`)
-            .set('user', 'John Doe'); // Tentando deletar mensagem de outro usuário
+            .set('user', 'John Doe');
 
         expect(response.status).toBe(401);
         expect(response.body.message).toContain('Sem permissão de edição');
