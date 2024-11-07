@@ -1,6 +1,7 @@
 import { cleanupInactiveUsers, startUserCleanupService } from '../../../src/services/userCleanupService';
 import { ParticipantModel } from '../../../src/models/participantModel';
 import { MessageModel } from '../../../src/models/messageModel';
+import { logger } from '@infra/config/logger';
 
 jest.mock('../../../src/models/participantModel');
 jest.mock('../../../src/models/messageModel');
@@ -39,12 +40,12 @@ describe('User Cleanup Service', () => {
         });
 
         it('deve capturar erro no console se falhar durante a execução', async () => {
-            console.error = jest.fn();
+            logger.error = jest.fn();
             (ParticipantModel.findAll as jest.Mock).mockRejectedValue(new Error('Database error'));
 
             await cleanupInactiveUsers();
 
-            expect(console.error).toHaveBeenCalledWith('Erro no serviço de limpeza de usuários:', expect.any(Error));
+            expect(logger.error).toHaveBeenCalledWith('Erro no serviço de limpeza de participantes:', expect.any(Error));
         });
     });
 
