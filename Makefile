@@ -50,9 +50,8 @@ stop: ## Para o serviço do MongoDB
 	sudo systemctl stop mongod
 
 ##@ Script de Atualização de Versão
-# Captura o tipo de atualização a partir dos argumentos
+
 TYPE := $(filter major minor patch,$(MAKECMDGOALS))
-# Remove o argumento de TYPE dos objetivos para evitar erros
 MAKECMDGOALS := $(filter-out $(TYPE),$(MAKECMDGOALS))
 
 .PHONY: bv bump_version major minor patch
