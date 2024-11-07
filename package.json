@@ -15,7 +15,10 @@
     "test:unit": "jest --testPathPattern=tests/unit",
     "test:integration": "jest --testPathPattern=tests/integration",
     "test:watch": "jest --watch",
-    "lint-branch-name": "node infrastructure/scripts/verify-branch-name.js"
+    "lint-branch-name": "node infrastructure/scripts/verify-branch-name.js",
+      "docker": "docker compose up -d",
+      "docker:prd": "docker-compose -f docker-compose.yml up -d --build",
+      "docker:stop": "docker compose down"
   },
   "repository": {
     "type": "git",
