@@ -1,14 +1,38 @@
 <h1 style="text-align: center">Welcome to Bate-Papo API 👋</h1>
 <p>
     <img alt="Version" src="https://img.shields.io/badge/version-2.2.0-blue.svg?cacheSeconds=2592000" />
-    <a href="https://codecov.io/github/pipas2309/projeto12-batepapo-uol-api" >
+    <a id="codecov" href="https://codecov.io/github/pipas2309/projeto12-batepapo-uol-api" >
         <img src="https://codecov.io/github/pipas2309/projeto12-batepapo-uol-api/graph/badge.svg?token=SI8A2BTEMY" alt="codecov badge"/>
     </a>
 </p>
 
-> Este projeto cria uma API para uma sala de bate-papo, no estilo dos anos 2000, como parte de um projeto educativo.
+---
 
-### 📌 Habilidades Praticadas
+## Índice
+
+- [📜 Descrição](#descrição)
+- [🧩 Tecnologias](#tecnologias)
+- [⚙️ Instalação](#instalação)
+- [🕹️ Como Usar](#como-usar)
+- [🚪 Rotas da API](#rotas-da-api)
+  - [Mensagens](#mensagens)
+  - [Participantes](#participantes)
+  - [Status](#status)
+- [🧪 Testes](#testes)
+- [📖 Swagger](#swagger)
+- [🧰 Makefile](#makefile)
+- [🤝 Contribuindo](#contribuindo)
+- [👤 Autor](#autor)
+- [📝 Licença](#licença)
+
+---
+
+## Descrição
+Este projeto é uma API para um sistema de bate-papo online, onde os usuários podem interagir em uma sala pública ou enviar mensagens privadas. Ele foi desenvolvido com **Node.js** e **Express**, integrando um banco de dados **MongoDB** para persistência de dados.
+
+[⬆ Voltar ao Índice](#índice)
+
+## Tecnologias
 
 - MongoDB
 - Express
@@ -21,15 +45,9 @@
 - Jest e supertest
 - Makefile
 
-## 📋 Pré-requisitos
+[⬆ Voltar ao Índice](#índice)
 
-- **Node.js** versão 16+
-- **MongoDB** instalado e em execução
-- **Dotenv** para variáveis de ambiente
-- **npm** para gerenciamento de pacotes
-
-
-## 🚀 Instalação
+## Instalação
 
 1. **Clone o repositório**:
    ```bash
@@ -57,58 +75,228 @@
 
 4. **Banco de dados**:
 
-   Garanta que o banco de dados MongoDB está configurado corretamente e funcionando.
+   Garanta que o banco de dados MongoDB está instaládo e configurado.
 
-## 🏃 Como Rodar
+## Como Usar
 
-**Para iniciar o servidor em modo de desenvolvimento com recarga automática**:
+**Para iniciar o servidor rápidamente**:
 
-   ```bash
-   npm run dev
-   ```
+   `make run`
 
 **Para compilar o projeto TypeScript para JavaScript**:
 
-   ```bash
-   npm run build
-   ```
+   `npm run build`
 
-**Para iniciar o servidor em modo de desenvolvimento**:
+**Para iniciar o servidor em modo de desenvolvimento com recarga automática**:
 
-   ```bash
-   npm start
-   ```
+   `npm run dev`
 
 **Para rodar todos os testes**:
 
-   ```bash
-   npm test
-   ```
+   `npm test`
 
-## 📖 Documentação SWAGGER da API
+[⬆ Voltar ao Índice](#índice)
 
-**A documentação Swagger da API está disponível após iniciar o servidor, acessando**:
-   ```bash
-   http://localhost:3000/api-docs
-   ```
+## Rotas da API
 
-## 🚪 Endpoints Disponíveis
+<details>
+<summary id="mensagens">📌 Mensagens</summary>
 
-| Método     | Rota            | Descrição                                                             |
-|------------|-----------------|-----------------------------------------------------------------------|
-| **GET**    | `/participants` | Retorna a lista de participantes na sala.                             |
-| **GET**    | `/messages`     | Retorna as mensagens da sala, com opções para limitar e filtrar.      |
-| **POST**   | `/participants` | Adiciona um novo participante na sala.                                |
-| **POST**   | `/messages`     | Envia uma nova mensagem para a sala.                                  |
-| **PUT**    | `/messages/:id` | Edita uma mensagem específica (se enviada pelo usuário autenticado).  |
-| **DELETE** | `/messages/:id` | Exclui uma mensagem específica (se enviada pelo usuário autenticado). |
+### Obtém mensagens filtradas por usuário e tipo de mensagem.
 
-## 🧪 Testes e Cobertura
+```http
+GET /messages
+```
 
-* O projeto utiliza Jest e supertest para testes de unidade e integração, garantindo uma cobertura de 100%.
-* Relatórios de cobertura de código podem ser encontrados em ./coverage/lcov-report/index.html para visualização detalhada. Basta rodar os testes para ter acesso.
+**Parâmetros:**
 
-## 🧰 Uso do Makefile
+| Query | Tipo    | Descrição                                       | Obrigatório |
+|-------|---------|-------------------------------------------------|-------------|
+| limit | integer | Limite de mensagens a serem retornadas.         | Não         |
+
+**Responses:**
+
+- 200 OK: Retorna uma lista de mensagens.
+
+---
+
+### Adiciona uma nova mensagem.
+
+```http
+POST /messages
+```
+
+**Parâmetros:**
+
+| Header | Tipo   | Descrição        | Obrigatório |
+|--------|--------|------------------|-------------|
+| user   | string | Nome do usuário. | Sim         |
+
+| Body | Tipo   | Descrição                   | Obrigatório |
+|------|--------|-----------------------------|-------------|
+| from | string | Nome do remetente.          | Sim         |
+| to   | string | Nome do destinatário.       | Sim         |
+| text | string | Mensagem.                   | Sim         |
+| type | enum   | message ou private_message. | Sim         |
+
+
+**Responses:**
+
+- 201 Created: Mensagem criada com sucesso.
+- 400 Bad Request: Formato inválido.
+- 403 Forbidden: Usuário não logado.
+
+---
+
+### Atualiza uma mensagem existente.
+
+```http
+PUT /messages/{id}
+```
+
+**Parâmetros:**
+
+| Header | Tipo   | Descrição        | Obrigatório |
+|--------|--------|------------------|-------------|
+| user   | string | Nome do usuário. | Sim         |
+
+| Params | Tipo   | Descrição                  | Obrigatório |
+|--------|--------|----------------------------|-------------|
+| id     | string | ID da mensagem (ObjectID). | path        |
+
+| Body | Tipo   | Descrição                   | Obrigatório |
+|------|--------|-----------------------------|-------------|
+| from | string | Nome do remetente.          | Sim         |
+| to   | string | Nome do destinatário.       | Sim         |
+| text | string | Nova mensagem.              | Sim         |
+| type | enum   | message ou private_message. | Sim         |
+
+**Responses:**
+
+- 200 OK: Mensagem atualizada com sucesso.
+- 400 Bad Request: Formato inválido.
+- 401 Unauthorized: Sem permissão de edição.
+- 404 Not Found: Mensagem não encontrada.
+
+---
+
+### Deleta uma mensagem.
+
+```http
+DELETE /messages/{id}
+```
+
+**Parâmetros:**
+
+| Header | Tipo   | Descrição        | Obrigatório |
+|--------|--------|------------------|-------------|
+| user   | string | Nome do usuário. | Sim         |
+
+| Params | Tipo   | Descrição                  | Obrigatório |
+|--------|--------|----------------------------|-------------|
+| id     | string | ID da mensagem (ObjectID). | path        |
+
+**Responses:**
+
+- 200 OK: Mensagem deletada com sucesso.
+- 401 Unauthorized: Sem permissão de edição.
+- 404 Not Found: Mensagem não encontrada.
+
+</details>
+
+<details>
+<summary id="participantes">📌 Participantes</summary>
+
+### Obtém todos os participantes.
+
+```http
+GET /participants
+```
+
+**Parâmetros:** Nenhum
+
+**Responses:**
+
+- 200 OK: Retorna uma lista de participantes.
+
+---
+
+### Adiciona um novo participante.
+
+```http
+POST /participants
+```
+
+**Parâmetros:**
+
+| Nome | Tipo   | Descrição        | Obrigatório |
+|------|--------|------------------|-------------|
+| name | string | Nome do usuário. | body        |
+
+**Responses:**
+
+- 201 Created: Participante criado com sucesso.
+- 400 Bad Request: Formato inválido.
+- 409 Conflict: Nome de usuário já está em uso.
+
+</details>
+
+<details>
+<summary id="status">📌 Status</summary>
+
+### Atualiza o status do participante.
+
+```http
+POST /status
+```
+
+**Parâmetros:**
+
+| Nome   | Tipo   | Descrição        | Obrigatório |
+|--------|--------|------------------|-------------|
+| user   | string | Nome do usuário. | header      |
+
+**Responses:**
+
+- 200 OK: Status atualizado com sucesso.
+- 404 Not Found: Usuário não encontrado.
+
+</details>
+
+[⬆ Voltar ao Índice](#índice)
+
+## Swagger
+
+A documentação Swagger da API está disponível após iniciar o servidor, acessando:
+`http://localhost:3000/api-docs`.<br>
+Particularmente útil para testar diretamente pela interface do swagger.
+
+[⬆ Voltar ao Índice](#índice)
+
+## Contribuindo
+
+Se você quiser contribuir com este projeto:
+
+1. Faça um fork do repositório.
+2. Crie uma branch para sua feature (`git checkout -b feature/nova-feature`).
+3. Faça commit das suas alterações (`git commit -m 'Adiciona nova feature'`).
+   1. Siga padrões de commits com tags 'feat:', 'chore:', 'fix:' por padrão os commits são em inglês.
+   2. Pode consultar uns exemplos nesse repo [iuricode/padroes-de-commits](https://github.com/iuricode/padroes-de-commits).
+4. Envie para o repositório remoto (`git push origin feature/nova-feature`).
+5. Abra um Pull Request para a develop.
+
+[⬆ Voltar ao Índice](#índice)
+
+## Testes
+
+* O projeto utiliza Jest e supertest para testes de unidade e integração, garantindo uma excelente cobertura.
+* Relatórios de cobertura de código podem ser encontrados em:
+  * ./coverage/lcov-report/index.html **após** rodar localmente o `npm test`
+  * No badge da [codecov](#codecov).
+
+[⬆ Voltar ao Índice](#índice)
+
+## Makefile
 
 **O projeto inclui um Makefile com comandos úteis para gerenciar o MongoDB e atualizar a versão do projeto.**
 
@@ -123,16 +311,18 @@
     * patch: Incrementa a versão de patch (x.x.X).
   exemplo: `make bv patch`
 
+[⬆ Voltar ao Índice](#índice)
+
 ## Autor
 
-👤 **Lucas Palharini**
+**Lucas Palharini**
 
-* Website: https://www.linkedin.com/in/lucas-palharini-749799166/
+* [Linkedin](https://www.linkedin.com/in/lucas-palharini)
 * Github: [@pipas2309](https://github.com/pipas2309)
 
-### 🏠 [Homepage](https://github.com/pipas2309/projeto12-batepapo-uol-api#readme)
-
-## 📝 Licença
+## Licença
 
 Copyright © 2024 [Lucas Palharini](https://github.com/pipas2309).<br />
 Este projeto é licenciado sob a [ISC](https://github.com/pipas2309/projeto12-batepapo-uol-api/blob/master/LICENSE).
+
+[⬆ Voltar ao Índice](#índice)
