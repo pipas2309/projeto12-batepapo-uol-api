@@ -1,0 +1,36 @@
+version: '3.8'
+
+services:
+    app:
+        build:
+            context: .
+            dockerfile: Dockerfile-dev
+        command: npm run dev
+        volumes:
+            - .:/app
+            - /app/node_modules
+        ports:
+            - '3000:3000'
+        depends_on:
+            - mongo
+        environment:
+            NODE_ENV: development
+            URL_CONNECT_MONGO: mongodb://mongo:27017/bate-papo
+            LOGOUT_TIME: 10000
+            ACTIVITY_CHECKER_TIME: 15000
+        networks:
+            - app-network
+
+    mongo:
+        image: mongo:6.0
+        restart: always
+        volumes:
+            - mongo-data:/data/db
+        networks:
+            - app-network
+
+volumes:
+    mongo-data:
+
+networks:
+    app-network:
