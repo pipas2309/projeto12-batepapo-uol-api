@@ -12,4 +12,7 @@ module.exports = {
         '!src/config/database.ts',
     ],
     setupFilesAfterEnv: ['<rootDir>/tests/jest.setup.ts'],
+    moduleNameMapper: {
+        "^@infra/(.*)$": "<rootDir>/infrastructure/$1",
+    },
 };
