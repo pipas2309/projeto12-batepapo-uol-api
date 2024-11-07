@@ -1,11 +1,13 @@
 import { getCurrentTime } from '../utils/timeUtils';
 import { ParticipantModel } from '../models/participantModel';
 import { Message, MessageModel } from '../models/messageModel';
+import { logger } from '@infra/config/logger';
 
 /** Serviço de limpeza de participantes inativos */
 export async function cleanupInactiveUsers(): Promise<void> {
     try {
         const participantsOnline = await ParticipantModel.findAll();
+        let count = 0;
 
         for (const participant of participantsOnline) {
             if (Date.now() - participant.lastStatus > Number(process.env.LOGOUT_TIME)) {
@@ -21,10 +23,14 @@ export async function cleanupInactiveUsers(): Promise<void> {
 
                 await ParticipantModel.deleteByName(user);
                 await MessageModel.create(logoutMessage);
+                count++;
             }
         }
+        logger.info(
+            `Limpando ${count} participante${count.toString() == '1' ? '' : 's'} inativo${count.toString() == '1' ? '' : 's'}...`,
+        );
     } catch (error) {
-        console.error('Erro no serviço de limpeza de usuários:', error);
+        logger.error('Erro no serviço de limpeza de participantes:', error);
     }
 }
 
