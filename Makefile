@@ -87,12 +87,20 @@ bv bump_version: ## Atualiza a versão do projeto automaticamente (major, minor 
 	echo -e "$(GREEN)🔖 chore: bump version to $$new_version$(RESET)"; \
 	echo ""
 
+##@ Scripts da API
 run: ## Roda o projeto de forma simplificada (inicia MongoDB e npm)
 	@$(MAKE) -s start
-	@echo -e "$(YELLOW)Iniciando o servidor de desenvolvimento...$(RESET)"
-	@npm run dev || { \
-		echo -e "$(RED)Erro ao iniciar o servidor de desenvolvimento. Verifique o npm.$(RESET)"; \
-		exit 1; \
-	}
-
-	@echo -e "$(GREEN)Servidor de desenvolvimento rodando com sucesso.$(RESET)"
+	@echo -e "$(YELLOW)Verificando se a porta 3000 está disponível...\n$(RESET)"
+	@continue=0; \
+	if lsof -i:3000 | grep -q LISTEN; then \
+		echo -e "$(RED)Erro: A porta 3000 já está em uso. Verifique se o servidor já está rodando.$(RESET)"; \
+		echo -e "$(MAGENTA)Dica: Use 'lsof -i:3000' para ver qual processo está usando a porta ou finalize o processo atual.\n$(RESET)"; \
+		continue=1; \
+	fi; \
+	if [ $$continue -eq 0 ]; then \
+		echo -e "$(YELLOW)Iniciando o servidor de desenvolvimento...$(RESET)"; \
+		npm run dev || { \
+			echo -e "$(RED)Erro ao iniciar o servidor de desenvolvimento. Verifique o npm.\n$(RESET)"; \
+			exit 1; \
+		}; \
+	fi; \
