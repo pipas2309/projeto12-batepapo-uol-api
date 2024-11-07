@@ -86,3 +86,13 @@ bv bump_version: ## Atualiza a versão do projeto automaticamente (major, minor 
 	echo -e "\n$(YELLOW)Sugestão de commit:$(RESET)"; \
 	echo -e "$(GREEN)🔖 chore: bump version to $$new_version$(RESET)"; \
 	echo ""
+
+run: ## Roda o projeto de forma simplificada (inicia MongoDB e npm)
+	@$(MAKE) -s start
+	@echo -e "$(YELLOW)Iniciando o servidor de desenvolvimento...$(RESET)"
+	@npm run dev || { \
+		echo -e "$(RED)Erro ao iniciar o servidor de desenvolvimento. Verifique o npm.$(RESET)"; \
+		exit 1; \
+	}
+
+	@echo -e "$(GREEN)Servidor de desenvolvimento rodando com sucesso.$(RESET)"
