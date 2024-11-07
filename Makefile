@@ -7,6 +7,7 @@ MAGENTA= \033[1;35m
 RESET  = \033[0m
 
 SHELL := /bin/bash
+CONTAINER_NAME = projeto12-batepapo-uol-api-app-1
 
 help h:
 	@echo -e "$(MAGENTA)- - - Comandos disponíveis no Makefile - - -$(RESET)"
@@ -85,6 +86,20 @@ bv bump_version: ## Atualiza a versão do projeto automaticamente (major, minor 
 	echo -e "\n$(YELLOW)Sugestão de commit:$(RESET)"; \
 	echo -e "$(GREEN)🔖 chore: bump version to $$new_version$(RESET)"; \
 	echo ""
+
+##@ Comandos Docker
+
+docker-shell: ## Acessa o shell do container da aplicação
+	@echo -e "$(YELLOW)Acessando o shell do container...$(RESET)"
+	docker exec -it $(CONTAINER_NAME) sh
+
+docker-logs: ## Exibe os logs em tempo real do container da aplicação
+	@echo -e "$(YELLOW)Exibindo logs do container...$(RESET)"
+	docker logs -f $(CONTAINER_NAME)
+
+docker-mongo-shell: ## Abre o shell do MongoDB dentro do container Mongo
+	@echo -e "$(YELLOW)Acessando o MongoDB Shell...$(RESET)"
+	docker exec -it projeto12-batepapo-uol-api-mongo-1 mongosh
 
 ##@ Scripts da API
 run: ## Roda o projeto de forma simplificada (inicia MongoDB e npm)
