@@ -21,13 +21,15 @@ describe('User Cleanup Service', () => {
 
     describe('cleanupInactiveUsers', () => {
         it('deve remover participantes inativos e criar mensagem de logout', async () => {
-            const participants = [{ name: 'InactiveUser', lastStatus: Date.now() - 600000 }];
+            let participants = [{ name: 'InactiveUser', lastStatus: Date.now() - 600000 }];
             (ParticipantModel.findAll as jest.Mock).mockResolvedValue(participants);
             (ParticipantModel.deleteByName as jest.Mock).mockResolvedValue(undefined);
             (MessageModel.create as jest.Mock).mockResolvedValue(undefined);
+            logger.info = jest.fn();
 
             await cleanupInactiveUsers();
 
+            expect(logger.info).toHaveBeenCalledWith('Limpando 1 participante inativo...');
             expect(ParticipantModel.findAll).toHaveBeenCalled();
             expect(ParticipantModel.deleteByName).toHaveBeenCalledWith('InactiveUser');
             expect(MessageModel.create).toHaveBeenCalledWith({
@@ -37,6 +39,13 @@ describe('User Cleanup Service', () => {
                 type: 'status',
                 time: '12:00:00'
             });
+
+            participants = [...participants, { name: 'InactiveUser2', lastStatus: Date.now() - 600000 }];
+            (ParticipantModel.findAll as jest.Mock).mockResolvedValue(participants);
+
+            await cleanupInactiveUsers();
+
+            expect(logger.info).toHaveBeenCalledWith('Limpando 2 participantes inativos...');
         });
 
         it('deve capturar erro no console se falhar durante a execução', async () => {
