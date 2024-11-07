@@ -1,5 +1,6 @@
 import { Request, Response, NextFunction } from 'express';
 import { HttpError } from '../errors/HttpError';
+import { logger } from '@infra/config/logger';
 
 /* eslint-disable @typescript-eslint/no-unused-vars */
 /**
@@ -10,7 +11,8 @@ import { HttpError } from '../errors/HttpError';
  * @param _next - Próxima função express (não usado diretamente).
  */
 export function errorHandler(err: HttpError, _req: Request, res: Response, _next: NextFunction): void {
-    console.error(`Erro ${err.statusCode}: ${err.message}`);
+    logger.error(`Erro ${err.statusCode}: ${err.message}`, { stack: err.stack });
+
     res.status(err.statusCode).json({
         status: 'error',
         statusCode: err.statusCode,

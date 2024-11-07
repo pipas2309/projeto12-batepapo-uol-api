@@ -1,4 +1,5 @@
 import { MongoClient, Db } from 'mongodb';
+import { logger } from '@infra/config/logger';
 
 const url = process.env.NODE_ENV === 'test' ? process.env.URL_CONNECT_MONGO_TEST : process.env.URL_CONNECT_MONGO;
 const mongoClient = new MongoClient(url);
@@ -18,9 +19,9 @@ export async function connectToDatabase(): Promise<void> {
     try {
         await mongoClient.connect();
         database.mongo = mongoClient.db('bate-papo');
-        console.log('Conectado ao MongoDB');
+        logger.info('Conectado ao MongoDB');
     } catch (error) {
-        console.error('Erro ao conectar ao MongoDB:', error);
+        logger.error('Erro ao conectar ao MongoDB:', error);
         throw error;
     }
 }
